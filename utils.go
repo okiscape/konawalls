@@ -35,8 +35,8 @@ func loadConfig() (*Config, error) {
 		fmt.Println("Config was not found, using default")
 
 		defaultConfig := Config{
-			Tags:     []string{"red"},
-			Limit:    50,
+			Tags:     []string{"touhou", "s"},
+			Limit:    100,
 			SavePath: filepath.Join(filepath.Dir(configPath), "downloads"),
 		}
 
