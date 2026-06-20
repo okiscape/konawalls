@@ -28,7 +28,7 @@ func main() {
 		return
 	}
 	if len(args) == 0 {
-		fmt.Println("konawalls!\nkonawalls get [opts | -h] - get new wallpapers")
+		fmt.Println("konawalls! - quick new wallpaper changer\nkonawalls get - get new wallpapers\n\nSources: https://github.com/okiscape/konawalls")
 		return
 	} else if args[0] == "get" {
 		client := http.Client{Timeout: 5 * time.Second}
@@ -53,6 +53,11 @@ func main() {
 		if err != nil {
 			fmt.Printf("Error while decoding JSON: %v\n", err)
 			return
+		}
+
+		if len(posts) == 0 {
+			fmt.Printf("No arts was fetched with configured tags!\nTags: %s", strings.Join(cfg.Tags, " "))
+			os.Exit(1)
 		}
 
 		randIndex := rand.N(len(posts))
