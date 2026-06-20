@@ -2,11 +2,12 @@
 > Mini CLI Tool for quick wallpapers installing from https://konachan.com/
 
 `config.json` schema:
-```json
+```jsonc
 {
     "tags": ["example_art_tag"],
+    "limit": 100, // count of arts from konachan 
     "savePath": "somepath",
-    "executeAfter": "wallpaper installation cmd(may be null)" 
+    "executeAfter": "wallpaper installation cmd(may be null)"
 }
 ```
 

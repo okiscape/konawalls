@@ -13,6 +13,7 @@ import (
 type Config struct {
 	Tags         []string `json:"tags"`
 	SavePath     string   `json:"savePath"`
+	Limit        int      `json:"limit"`
 	ExecuteAfter *string  `json:"executeAfter"`
 }
 
@@ -33,9 +34,9 @@ func loadConfig() (*Config, error) {
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		fmt.Println("Config was not found, using default")
 
-		// Создаем дефолтный конфиг
 		defaultConfig := Config{
 			Tags:     []string{"red"},
+			Limit:    50,
 			SavePath: filepath.Join(filepath.Dir(configPath), "downloads"),
 		}
 

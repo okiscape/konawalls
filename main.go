@@ -8,11 +8,13 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 )
 
 type PostResponse []struct {
+	Id       int    `json:"id"`
 	Tags     string `json:"tags"`
 	Source   string `json:"source"`
 	Jpeg_url string `json:"jpeg_url"`
@@ -31,7 +33,7 @@ func main() {
 	} else if args[0] == "get" {
 		client := http.Client{Timeout: 5 * time.Second}
 
-		url := "https://konachan.com/post.json?tags=" + strings.Join(cfg.Tags, "+")
+		url := "https://konachan.com/post.json?tags=" + strings.Join(cfg.Tags, "+") + "&limit=" + strconv.Itoa(cfg.Limit)
 
 		resp, fetcherr := client.Get(url)
 		if fetcherr != nil {
@@ -54,8 +56,13 @@ func main() {
 		}
 
 		randIndex := rand.N(len(posts))
-		fileName := filepath.Base(posts[randIndex].Jpeg_url)
-		derr := downloadFile(posts[randIndex].Jpeg_url, cfg.SavePath)
+		selectedWall := posts[randIndex]
+
+		fmt.Printf("Downloading post: https://konachan.com/post/show/%d\n", selectedWall.Id)
+		fmt.Printf("Tags: %s\n", selectedWall.Tags)
+
+		fileName := filepath.Base(selectedWall.Jpeg_url)
+		derr := downloadFile(selectedWall.Jpeg_url, cfg.SavePath)
 		if derr != nil {
 			fmt.Printf("Cannot download file %s: %v\n", fileName, derr)
 		}
