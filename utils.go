@@ -11,10 +11,13 @@ import (
 )
 
 type Config struct {
-	Tags         []string `json:"tags"`
-	SavePath     string   `json:"savePath"`
-	Limit        int      `json:"limit"`
-	ExecuteAfter *string  `json:"executeAfter"`
+	Provider     json.RawMessage           `json:"defaultProvider,omitempty"`
+	Providers    map[string]ProviderConfig `json:"providers,omitempty"`
+	Default      json.RawMessage           `json:"default,omitempty"`
+	Tags         []string                  `json:"tags,omitempty"`
+	SavePath     string                    `json:"savePath"`
+	Limit        int                       `json:"limit"`
+	ExecuteAfter *string                   `json:"executeAfter"`
 }
 
 func getConfigPath() (string, error) {
@@ -35,7 +38,16 @@ func loadConfig() (*Config, error) {
 		fmt.Println("Config was not found, using default")
 
 		defaultConfig := Config{
-			Tags:     []string{"touhou", "s"},
+			Providers: map[string]ProviderConfig{
+				"konachan": {
+					Tags: []string{"konata_izumi", "s"},
+				},
+				"safebooru": {
+					Tags: []string{"konata_izumi"},
+				},
+			},
+			Default:  json.RawMessage(`["konachan", "safebooru"]`),
+			Tags:     []string{"konata_izumi"},
 			Limit:    100,
 			SavePath: filepath.Join(filepath.Dir(configPath), "downloads"),
 		}
@@ -71,6 +83,10 @@ func loadConfig() (*Config, error) {
 		return nil, fmt.Errorf("Error occured while JSON parsing: %w", err)
 	}
 
+	if len(cfg.Providers) == 0 && len(cfg.Provider) == 0 {
+		cfg.Provider = json.RawMessage(`"konachan"`)
+	}
+
 	return &cfg, nil
 }
 
@@ -96,7 +112,9 @@ func downloadFile(url string, savePath string) error {
 	}
 
 	client := http.Client{Timeout: 30 * time.Second}
-	resp, err := client.Get(url)
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Set("User-Agent", "konawalls/1.0")
+	resp, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("request error: %w", err)
 	}
