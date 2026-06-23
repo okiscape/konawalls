@@ -1,7 +1,7 @@
 # Konawalls
 > CLI Tool for quick wallpapers installation
 
-`config.json` schema:
+**`config.json` schema**
 ```jsonc
 {
     "tags": ["konata_izumi"],
@@ -38,5 +38,12 @@
 
 build using `go build -o konawalls` and `ln -s (absolute path to builded executable) /usr/bin/konawalls`
 
-### todos
+**Advanced usage**
+Konawalls also supports **config override arguments** via `--`/`-`
+You can override your config options.
+> `konawalls get --provider safebooru --tags konata_izumi`\
+> `konawalls get --limit 150`\
+> `konawalls get -h` to see all the args
+
+*todos*
  - [ ] add placeholders in executeAfter(for example, to save arts and for not deleting them - symlinking em)
